@@ -18,17 +18,28 @@ L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
 earthquake_url='https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson'
 //load geojson
 d3.json(earthquake_url).then(function(data){
-    // console.log(data['features'][0]['geometry']['coordinates'])
-    var one_earthquake = data['features'][0]
-    // console.log(one_earthquake)
-    var coordinates = one_earthquake['geometry']['coordinates']
-    console.log(coordinates)
-    // put a marker on the map at the lat long of this earthquake
-    L.circle([coordinates[1],coordinates[0]], {
-        fillOpacity: 0.75,
-        color: "blue", 
-        fillColor: 'red',
-        radius: 100000
-      }).bindPopup("<h3>" + one_earthquake['properties']['place']+"</h3>").addTo(myMap)
+    // L.geoJSON(data).addTo(myMap)
 
+// we want to craft some input to return an array of an array for heat layers
+    var heatArray = []
+    data['features'].forEach(function(earthquake){
+        var coordinates = earthquake['geometry']['coordinates']
+        heatArray.push([coordinates[1], coordinates[0], coordinates[2]])
+    })
+    // console.log(heatArray)
+    L.heatLayer(heatArray).addTo(myMap)
+    // ******* does 1 **********
+    // // console.log(data['features'][0]['geometry']['coordinates'])
+    // var one_earthquake = data['features'][0]
+    // // console.log(one_earthquake)
+    // var coordinates = one_earthquake['geometry']['coordinates']
+    // console.log(coordinates)
+    // // put a marker on the map at the lat long of this earthquake
+    // L.circle([coordinates[1],coordinates[0]], {
+    //     fillOpacity: 0.75,
+    //     color: "blue", 
+    //     fillColor: 'red',
+    //     radius: 100000
+    //   }).bindPopup("<h3>" + one_earthquake['properties']['place']+"</h3>").addTo(myMap)
+    // *************************
 });
