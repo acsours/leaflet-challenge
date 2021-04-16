@@ -14,6 +14,25 @@ L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
     accessToken: API_KEY
 }).addTo(myMap)
 
+
+function getColor(depth){
+    var color = ''
+    if (depth<10) {
+        color = '#96ed89'
+    }else if (depth<30){
+        color = '#b2d100'
+    }else if (depth<50){
+        color = '#d2ad00'
+    }else if (depth<70){
+        color = '#e49200'
+    }else if (depth<90){
+        color = '#f86000'
+    }else {
+        color = '#ff2d00'
+    }
+    return color
+};
+
 //add url
 earthquake_url='https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson'
 //load geojson
@@ -21,13 +40,35 @@ d3.json(earthquake_url).then(function(data){
     // L.geoJSON(data).addTo(myMap)
 
 // we want to craft some input to return an array of an array for heat layers
-    var heatArray = []
-    data['features'].forEach(function(earthquake){
+    // var markerArray = []
+    // data['features'].slice(0, 50).forEach(function(earthquake){
+    //     var coordinates = earthquake['geometry']['coordinates']
+    //     var earthquake_marker=L.marker([coordinates[1], coordinates[0], coordinates[2]])
+    //                            .bindPopup("<h4>Location: " + earthquake['properties']['place']+"</h4><h4> Magnitude: "+earthquake['properties']['mag']+"</h4")  
+    //                            .addTo(myMap)
+    data['features'].slice(0, 50).forEach(function(earthquake){
         var coordinates = earthquake['geometry']['coordinates']
-        heatArray.push([coordinates[1], coordinates[0], coordinates[2]])
+        var depth = coordinates[2]
+        var mag = earthquake['properties']['mag']
+        
+        var earthquake_marker=L.circle([coordinates[1], coordinates[0]], {
+                                fillOpacity:0.75,
+                                color:"white",
+                                weight: 1,
+                                fillColor: getColor(depth),
+                                radius: mag*100000                           
+                            }).bindPopup("<h4>Location: " + earthquake['properties']['place']+"</h4><h4> Magnitude: "+mag+"</h4").addTo(myMap)
     })
-    // console.log(heatArray)
-    L.heatLayer(heatArray).addTo(myMap)
+
+    // var heatArray = []
+    // data['features'].forEach(function(earthquake){
+    //     var coordinates = earthquake['geometry']['coordinates']
+    //     heatArray.push([coordinates[1], coordinates[0], coordinates[2]])
+    // })
+    // // console.log(heatArray)
+    // L.heatLayer(heatArray).addTo(myMap)
+   
+   
     // ******* does 1 **********
     // // console.log(data['features'][0]['geometry']['coordinates'])
     // var one_earthquake = data['features'][0]
