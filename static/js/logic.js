@@ -14,7 +14,7 @@ L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
     accessToken: API_KEY
 }).addTo(myMap)
 
-
+// Set colors based on depth of earthquake
 function getColor(depth){
     var color = ''
     if (depth<10) {
@@ -33,8 +33,31 @@ function getColor(depth){
     return color
 };
 
+// Create legend
+
+var legend = L.control({position: 'bottomright'});
+
+legend.onAdd = function (map) {
+
+    var div = L.DomUtil.create('div', 'info legend'),
+        grades = [-10, 10, 30, 50, 70, 90],
+        labels = ['-10-10', '10-30', '30-50', '50-70', '70-90', '+90'];
+
+    // loop through our density intervals and generate a label with a colored square for each interval
+    for (var i = 0; i < grades.length; i++) {
+        div.innerHTML +=
+            '<i style="background:' + getColor(grades[i] + 1) + '"></i> ' +
+            grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+    }
+
+    return div;
+};
+
+legend.addTo(myMap);
+
 //add url
 earthquake_url='https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson'
+
 //load geojson
 d3.json(earthquake_url).then(function(data){
     // L.geoJSON(data).addTo(myMap)
@@ -46,7 +69,7 @@ d3.json(earthquake_url).then(function(data){
     //     var earthquake_marker=L.marker([coordinates[1], coordinates[0], coordinates[2]])
     //                            .bindPopup("<h4>Location: " + earthquake['properties']['place']+"</h4><h4> Magnitude: "+earthquake['properties']['mag']+"</h4")  
     //                            .addTo(myMap)
-    data['features'].slice(0, 50).forEach(function(earthquake){
+    data['features'].forEach(function(earthquake){
         var coordinates = earthquake['geometry']['coordinates']
         var depth = coordinates[2]
         var mag = earthquake['properties']['mag']
@@ -56,7 +79,7 @@ d3.json(earthquake_url).then(function(data){
                                 color:"white",
                                 weight: 1,
                                 fillColor: getColor(depth),
-                                radius: mag*100000                           
+                                radius: mag*15000                           
                             }).bindPopup("<h4>Location: " + earthquake['properties']['place']+"</h4><h4> Magnitude: "+mag+"</h4").addTo(myMap)
     })
 
