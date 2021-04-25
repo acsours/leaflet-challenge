@@ -62,13 +62,7 @@ earthquake_url='https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_we
 d3.json(earthquake_url).then(function(data){
     // L.geoJSON(data).addTo(myMap)
 
-// we want to craft some input to return an array of an array for heat layers
-    // var markerArray = []
-    // data['features'].slice(0, 50).forEach(function(earthquake){
-    //     var coordinates = earthquake['geometry']['coordinates']
-    //     var earthquake_marker=L.marker([coordinates[1], coordinates[0], coordinates[2]])
-    //                            .bindPopup("<h4>Location: " + earthquake['properties']['place']+"</h4><h4> Magnitude: "+earthquake['properties']['mag']+"</h4")  
-    //                            .addTo(myMap)
+    // within the array of features, create a marker based on coordinates, depth, and magnitude
     data['features'].forEach(function(earthquake){
         var coordinates = earthquake['geometry']['coordinates']
         var depth = coordinates[2]
@@ -80,30 +74,7 @@ d3.json(earthquake_url).then(function(data){
                                 weight: 1,
                                 fillColor: getColor(depth),
                                 radius: mag*15000                           
-                            }).bindPopup("<h4>Location: " + earthquake['properties']['place']+"</h4><h4> Magnitude: "+mag+"</h4").addTo(myMap)
+                            }).bindPopup("<h4>Location: " + earthquake['properties']['place']+"</h4><h4> Magnitude: "+mag+"</h4><h4> Depth: "+depth+"</h4>").addTo(myMap)
     })
 
-    // var heatArray = []
-    // data['features'].forEach(function(earthquake){
-    //     var coordinates = earthquake['geometry']['coordinates']
-    //     heatArray.push([coordinates[1], coordinates[0], coordinates[2]])
-    // })
-    // // console.log(heatArray)
-    // L.heatLayer(heatArray).addTo(myMap)
-   
-   
-    // ******* does 1 **********
-    // // console.log(data['features'][0]['geometry']['coordinates'])
-    // var one_earthquake = data['features'][0]
-    // // console.log(one_earthquake)
-    // var coordinates = one_earthquake['geometry']['coordinates']
-    // console.log(coordinates)
-    // // put a marker on the map at the lat long of this earthquake
-    // L.circle([coordinates[1],coordinates[0]], {
-    //     fillOpacity: 0.75,
-    //     color: "blue", 
-    //     fillColor: 'red',
-    //     radius: 100000
-    //   }).bindPopup("<h3>" + one_earthquake['properties']['place']+"</h3>").addTo(myMap)
-    // *************************
 });
