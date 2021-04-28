@@ -116,7 +116,9 @@ var outdoors = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/
 
 // plus two layer groups 
 // earthquakes
+
 // tectonic plates
+// L.geoJSON(geojsonFeature).addTo(map);
 
 // // Streetmap Layer
 // var streetmap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
@@ -158,11 +160,8 @@ var baseMaps = {
 //               37.09, -95.71
 //             ],
 //             zoom: 5,
-//             layers: [streetmap, stateLayer, cityLayer]
+//             layers: [satellite, greyscale, outdoors]
 //           });
 
 // Create a layer control, containing our baseMaps and overlayMaps, and add them to the map
-// L.control.layers(baseMaps, //, overlayMaps,
-//   {
-//     'collapsed': false
-//   }).addTo(myMap);
+L.control.layers(baseMaps).addTo(myMap);
