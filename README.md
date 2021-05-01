@@ -3,13 +3,13 @@ This map uses Leaflet and Mapbox to create
 
 
 Greyscale layer
-![sample](https://github.com/acsours/leaflet-challenge/Leaflet-Step-2/static/images/greyscale_preview.png?raw=true)
+![sample](https://github.com/acsours/leaflet-challenge/blob/main/Leaflet-Step-2/static/images/greyscale_preview.png?raw=true)
 
 Outdoors Layer
-![sample](https://github.com/acsours/leaflet-challenge/Leaflet-Step-2/static/images/map_wide_view.png?raw=true)
+![sample](https://github.com/acsours/leaflet-challenge/blob/main/Leaflet-Step-2/static/images/map_wide_view.png?raw=true)
 
 Satellite Layer
-![sample](https://github.com/acsours/leaflet-challenge/Leaflet-Step-2/static/images/satellite_preview.png?raw=true)
+![sample](https://github.com/acsours/leaflet-challenge/blob/main/Leaflet-Step-2/static/images/satellite_preview.png?raw=true)
 
 
 # Data Sources
