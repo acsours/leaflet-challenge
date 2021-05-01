@@ -1,19 +1,11 @@
-var plates_url="https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_boundaries.json"
 
-console.log('first test')
-
-
-// function createPlates(plateData) {
-//     // define a function we want to run once for each feature in the features array
-//     // pull the coordinates from each features
-// }
 //create map
 var myMap=L.map('map', {
     center: [15.5994, -28.6731],
     zoom: 3
 });
-//create a tile layer
 
+//create a tile layer
 L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
     attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
     tileSize: 512,
@@ -45,7 +37,6 @@ function getColor(depth){
 };
 
 // Create legend
-
 var legend = L.control({position: 'bottomright'});
 
 legend.onAdd = function (map) {
@@ -75,14 +66,16 @@ var plates_url="https://raw.githubusercontent.com/fraxen/tectonicplates/master/G
 
 //load geojson
 d3.json(earthquake_url).then(function(data){
-    // L.geoJSON(data).addTo(myMap)
+
+// create an empty array for markers
   var earthquakeMarkers=[]
-    // within the array of features, create a marker based on coordinates, depth, and magnitude
+//   loop through each item in features
     data['features'].forEach(function(earthquake){
+        // within the array of features, create a marker based on coordinates, depth, and magnitude
         var coordinates = earthquake['geometry']['coordinates']
         var depth = coordinates[2]
         var mag = earthquake['properties']['mag']
-        
+        // push each circle marker to the earthquakeMarkers array
         earthquakeMarkers.push(L.circle([coordinates[1], coordinates[0]], {
                                 fillOpacity:0.75,
                                 color:"white",
@@ -92,9 +85,9 @@ d3.json(earthquake_url).then(function(data){
                             }).bindPopup("<h4>Location: " + earthquake['properties']['place']+"</h4><h4> Magnitude: "+mag+"</h4><h4> Depth: "+depth+"</h4>"))//.addTo(myMap)
     });
 
+    // Nested d3.json to read in tectonic plates coordinates
     d3.json(plates_url).then(function(data){
-        // console.log('test')
-        // console.log(data.features);
+        // create a geoJson object and store as plates
         var plates = L.geoJson(data, {
             'style': {
                 'color':'orange',
@@ -107,8 +100,7 @@ d3.json(earthquake_url).then(function(data){
 
 
 
-    // Create base layers
-    // we want three layers:
+    // Create 3 base layers
     // Satellite
     var satellite = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
         attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
@@ -118,6 +110,7 @@ d3.json(earthquake_url).then(function(data){
         id: "mapbox/satellite-v9",
         accessToken: API_KEY
         })
+
     // greyscale
     var greyscale = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
         attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
@@ -138,35 +131,29 @@ d3.json(earthquake_url).then(function(data){
         accessToken: API_KEY
         })
 
-    // plus two layer groups 
+    // Create overlay layer group
     // earthquakes
     var earthquakeLayer=L.layerGroup(earthquakeMarkers)
 
-    // tectonic plates
-    // L.geoJSON(geojsonFeature).addTo(map);
 
 
-
-    // // // Create two separate layer groups below. One for city markers, and one for states markers
-    // // var cityLayer = L.layerGroup(cityMarkers);
-
-    // // var stateLayer = L.layerGroup(stateMarkers);
-
-    // Create a baseMaps object to contain the streetmap and darkmap
+    // Create a baseMaps object to contain 3 base maps
     var baseMaps = {
         'Satellite map': satellite,
         'Greyscale Map': greyscale,
         'Outdoors Map': outdoors
     };
-    // // // Create an overlayMaps object here to contain the "tectonic plates" and "earthquake" layers
+
+    // Create an overlayMaps object here to contain the "tectonic plates" and "earthquake" layers
     var overlayMaps = {
         'Earthquakes': earthquakeLayer,
         'Tectonic Plates': plates
-        // 'State Population': stateLayer
     }
 
 
     // Create a layer control, containing our baseMaps and overlayMaps, and add them to the map
-    L.control.layers(baseMaps,overlayMaps).addTo(myMap);
+    L.control.layers(baseMaps,overlayMaps, {
+        'collapsed': false
+      }).addTo(myMap);
     }); 
 });
