@@ -1,3 +1,12 @@
+var plates_url="https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_boundaries.json"
+
+console.log('first test')
+
+
+// function createPlates(plateData) {
+//     // define a function we want to run once for each feature in the features array
+//     // pull the coordinates from each features
+// }
 //create map
 var myMap=L.map('map', {
     center: [15.5994, -28.6731],
@@ -13,6 +22,8 @@ L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
     id: "mapbox/satellite-v9",
     accessToken: API_KEY
 }).addTo(myMap)
+
+
 
 // // Set colors based on depth of earthquake
 function getColor(depth){
@@ -55,8 +66,12 @@ legend.onAdd = function (map) {
 
 legend.addTo(myMap);
 
-//add url
-earthquake_url='https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson'
+
+
+//add urls
+var earthquake_url='https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson';
+
+var plates_url="https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_boundaries.json";
 
 //load geojson
 d3.json(earthquake_url).then(function(data){
@@ -75,81 +90,83 @@ d3.json(earthquake_url).then(function(data){
                                 fillColor: getColor(depth),
                                 radius: mag*20000                           
                             }).bindPopup("<h4>Location: " + earthquake['properties']['place']+"</h4><h4> Magnitude: "+mag+"</h4><h4> Depth: "+depth+"</h4>"))//.addTo(myMap)
-    })
+    });
+
+    d3.json(plates_url).then(function(data){
+        // console.log('test')
+        // console.log(data.features);
+        var plates = L.geoJson(data, {
+            'style': {
+                'color':'orange',
+                'weight': 1.0
+            }
+        })
+    
 
 
 
-  var plates_url="https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_boundaries.json"
+
+
+    // Create base layers
+    // we want three layers:
+    // Satellite
+    var satellite = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+        attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
+        tileSize: 512,
+        maxZoom: 18,
+        zoomOffset: -1,
+        id: "mapbox/satellite-v9",
+        accessToken: API_KEY
+        })
+    // greyscale
+    var greyscale = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+        attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
+        tileSize: 512,
+        maxZoom: 18,
+        zoomOffset: -1,
+        id: "mapbox/light-v10",
+        accessToken: API_KEY
+        })
+
+    // Outdoors
+    var outdoors = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+        attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
+        tileSize: 512,
+        maxZoom: 18,
+        zoomOffset: -1,
+        id: "mapbox/outdoors-v11",
+        accessToken: API_KEY
+        })
+
+    // plus two layer groups 
+    // earthquakes
+    var earthquakeLayer=L.layerGroup(earthquakeMarkers)
+
+    // tectonic plates
+    // L.geoJSON(geojsonFeature).addTo(map);
 
 
 
-  // Create base layers
-  // we want three layers:
-  // Satellite
-  var satellite = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
-      attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
-      tileSize: 512,
-      maxZoom: 18,
-      zoomOffset: -1,
-      id: "mapbox/satellite-v9",
-      accessToken: API_KEY
-    })
-  // greyscale
-  var greyscale = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
-      attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
-      tileSize: 512,
-      maxZoom: 18,
-      zoomOffset: -1,
-      id: "mapbox/light-v10",
-      accessToken: API_KEY
-    })
+    // // // Create two separate layer groups below. One for city markers, and one for states markers
+    // // var cityLayer = L.layerGroup(cityMarkers);
 
-  // Outdoors
-  var outdoors = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
-      attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
-      tileSize: 512,
-      maxZoom: 18,
-      zoomOffset: -1,
-      id: "mapbox/outdoors-v11",
-      accessToken: API_KEY
-    })
+    // // var stateLayer = L.layerGroup(stateMarkers);
 
-  // plus two layer groups 
-  // earthquakes
-  var earthquakeLayer=L.layerGroup(earthquakeMarkers)
-
-  // tectonic plates
-  // L.geoJSON(geojsonFeature).addTo(map);
+    // Create a baseMaps object to contain the streetmap and darkmap
+    var baseMaps = {
+        'Satellite map': satellite,
+        'Greyscale Map': greyscale,
+        'Outdoors Map': outdoors
+    };
+    // // // Create an overlayMaps object here to contain the "tectonic plates" and "earthquake" layers
+    var overlayMaps = {
+        'Earthquakes': earthquakeLayer,
+        'Tectonic Plates': plates
+        // 'State Population': stateLayer
+    }
 
 
-
-  // // // Create two separate layer groups below. One for city markers, and one for states markers
-  // // var cityLayer = L.layerGroup(cityMarkers);
-
-  // // var stateLayer = L.layerGroup(stateMarkers);
-
-  // Create a baseMaps object to contain the streetmap and darkmap
-  var baseMaps = {
-    'Satellite map': satellite,
-    'Greyscale Map': greyscale,
-    'Outdoors Map': outdoors
-  };
-  // // // Create an overlayMaps object here to contain the "tectonic plates" and "earthquake" layers
-  var overlayMaps = {
-    'Earthquakes': earthquakeLayer
-    // 'State Population': stateLayer
-  }
-
-  // Modify the map so that it will have the streetmap, states, and cities layers
-  // var myMap = L.map("map", {
-  //             center: [
-  //               37.09, -95.71
-  //             ],
-  //             zoom: 5,
-  //             layers: [satellite, greyscale, outdoors]
-  //           });
-
-  // Create a layer control, containing our baseMaps and overlayMaps, and add them to the map
-  L.control.layers(baseMaps,overlayMaps).addTo(myMap);
-
+    // Create a layer control, containing our baseMaps and overlayMaps, and add them to the map
+    L.control.layers(baseMaps,overlayMaps).addTo(myMap);
+    }); 
 });
