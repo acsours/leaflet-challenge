@@ -1,5 +1,5 @@
 # leaflet-challenge
-This map uses Leaflet and Mapbox to create
+This map uses Leaflet and Mapbox to map all earthquakes in the past 7 days.
 
 
 Greyscale layer
